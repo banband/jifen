@@ -100,7 +100,6 @@ while True:
         reslist_1 = reslist[0]
         jylsh = reslist_1[1]
         reslist_2 = int(reslist_1[10])
-        #print(reslist_2)
         if reslist_2 >= 4590:
             reslist_3 = random.randint(reslist_2 + 400, reslist_2 + 490)
         else:
