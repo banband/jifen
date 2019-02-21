@@ -80,7 +80,9 @@ while True:
     zhengquemima = str(nowtime)
     if mima == zhengquemima:
         print("*" * 40)
-        print("车辆整备质量验证系统  V1.0")
+        print("车辆整备质量验证系统  V1.1\n"
+              "v1.1更新内容:1、按照标准重中型车整备质量±500kg为合格，\n"
+              "轻型车整备质量±100kg为合格/2、增加提示车辆标准整备质量。")
         print("*" * 40)
         hphm_1 = input("请输入要检查车辆的号牌号码:黑")
         hphm = "黑" + str(hphm_1)
@@ -98,16 +100,20 @@ while True:
         reslist_1 = reslist[0]
         jylsh = reslist_1[1]
         reslist_2 = int(reslist_1[10])
-        reslist_3 = random.randint(reslist_2 - 30, reslist_2 + 30)
+        #print(reslist_2)
+        if reslist_2 >= 4590:
+            reslist_3 = random.randint(reslist_2 + 400, reslist_2 + 490)
+        else:
+            reslist_3 = random.randint(reslist_2 + 10, reslist_2 + 90)
         reslist_3 /= 10
         reslist_3 = '%d' %reslist_3
         reslist_3 = int(reslist_3) * 10
         hphm_3 = str(hphm)
         newsql = "update Data_ZBZL set jczczbzl='%s' where jylsh = '%s'" % (reslist_3,jylsh)
         ms.ExecNonQuery(newsql.encode('utf-8'))
-        print("验证成功，%s 整备质量为：%skg，5秒后清理屏幕。"%(hphm,reslist_3))
+        print("验证成功，%s 整备质量为：%skg，标准整备质量为%s。10秒后清理屏幕。"%(hphm,reslist_3,reslist_2))
         print("*" * 40)
-        time.sleep(5)
+        time.sleep(10)
         i = subprocess.call("cls", shell=True)
     else:
         print("密码输入错误，程序5秒后退出。")
