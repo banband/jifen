@@ -1,4 +1,4 @@
-#m
+import random
 def xuanze():
 
 
@@ -18,27 +18,28 @@ def guntong():
     diyihang = '1;0;0.0'
     biaojidian_1_key = '2;350;'
     biaojidian_2_key = '3;716;'
-    biaojidian_3_key = '4;4095;'
+    biaojidian_3_key = ''
     biaojidian_1 = 375
     biaojidian_2 = 711
-    biaojidian_3 = 4095
+    biaojidian_3 = ''
     gdbjd_1 = 375.0
     gdbjd_2 = 711.0
-    gdbjd_3 = 4095.0
+    gdbjd_3 = ''
     y_diyihang = '1;0;0.0'
     y_biaojidian_1_key = '2;362;'
     y_biaojidian_2_key = '3;724;'
-    y_biaojidian_3_key = '4;4095;'
+    y_biaojidian_3_key = ''
     y_biaojidian_1 = 364
     y_biaojidian_2 = 732
     y_biaojidian_3 = 4005
     y_gdbjd_1 = 364.0
     y_gdbjd_2 = 732.0
-    y_gdbjd_3 = 4005.0
+    y_gdbjd_3 = ''
 
 
     while True:
         baifen = str(input('z'))
+        chazhidian = str(input("差值点"))
         if baifen == 'q':
             xuanze()
 
@@ -51,22 +52,31 @@ def guntong():
             y_biaojidian_3 = y_gdbjd_3
 
         else:
-            biaojidian_1 = biaojidian_1 / int(baifen) * 80
-            biaojidian_2 = biaojidian_2 / int(baifen) * 80
-            biaojidian_3 = biaojidian_3 / int(baifen) * 80
-            y_biaojidian_1 = y_biaojidian_1 / int(baifen) * 80
-            y_biaojidian_2 = y_biaojidian_2 / int(baifen) * 80
-            y_biaojidian_3 = y_biaojidian_3 / int(baifen) * 80
+            chazhidianbaifenbi = int(chazhidian) + random.randint(-9,9)
+            zuolunbuchang = 100 - chazhidianbaifenbi
+            youlunbuchang = 100 + chazhidianbaifenbi
+            print(zuolunbuchang)
+            print(youlunbuchang)
+            biaojidian_1 = (biaojidian_1 / int(baifen)) * int(zuolunbuchang) * 0.8
+            zuizongzuoli_1 = '%.1f'%biaojidian_1
+            print(zuizongzuoli_1)
+            biaojidian_2 = (biaojidian_2 / int(baifen)) * int(zuolunbuchang) * 0.8
+            biaojidian_3 = (biaojidian_3 / int(baifen)) * int(zuolunbuchang) * 0.8
+            print(biaojidian_3)
+            y_biaojidian_1 = (y_biaojidian_1 / int(baifen)) * int(youlunbuchang) * 0.8
+            y_biaojidian_2 = (y_biaojidian_2 / int(baifen)) * int(youlunbuchang) * 0.8
+            y_biaojidian_3 = (y_biaojidian_3 / int(baifen)) * int(youlunbuchang) * 0.8
+            print(y_biaojidian_3)
 
 
-        file_handle=open('D:\github\zhidong\左力标定.txt',mode='w')
-        file_handle.writelines([diyihang,'\n',biaojidian_1_key,'%.1f'%biaojidian_1,'\n',biaojidian_2_key,'%.1f'%biaojidian_2,'\n',biaojidian_3_key,'%.1f'%biaojidian_3])
+        file_handle=open('Data\标定数据\左力标定.txt',mode='w')
+        file_handle.writelines([diyihang,'\n',biaojidian_1_key,zuizongzuoli_1,'\n',biaojidian_2_key,'%.1f'%biaojidian_2,'\n',biaojidian_3_key,biaojidian_3])
         file_handle.close()
 
-        file_handle = open('D:\github\zhidong\右力标定.txt', mode='w')
+        file_handle = open('Data\标定数据\右力标定.txt', mode='w')
         file_handle.writelines(
             [y_diyihang, '\n', y_biaojidian_1_key, '%.1f' % y_biaojidian_1, '\n', y_biaojidian_2_key, '%.1f' % y_biaojidian_2, '\n',
-             y_biaojidian_3_key, '%.1f' % y_biaojidian_3])
+             y_biaojidian_3_key,y_biaojidian_3])
         file_handle.close()
 
 def pingban():
