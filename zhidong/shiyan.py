@@ -50,7 +50,7 @@ class jisuan(object):
             for i in lines:
                 d = re.split(r";",i)
                 e = float(d[2])
-                print(e)
+                #print(e)
                 x = (e / int(self.baifenbi)) * int(self.libuchang) * 0.8
                 x = str('%.1f'%x)
                 line = i.replace(str(e),x)
