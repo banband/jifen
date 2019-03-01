@@ -1,6 +1,20 @@
-import datetime
-nowTime=datetime.datetime.now().strftime('%H%M%S')#现在
-pastTime = (datetime.datetime.now()-datetime.timedelta(hours=1)).strftime('%H%M%S')#过去一小时时间
-afterTomorrowTime = (datetime.datetime.now()+datetime.timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S')#后天
-tomorrowTime = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')#明天
-print('\n',nowTime,'\n',pastTime,'\n',afterTomorrowTime,'\n',tomorrowTime)
+
+
+biaodingweizhi = "Data\标定数据\\"
+beifenweizhi = "Data\标定数据\标定备份\\"
+jianchalujing = "Data\标定数据\\"
+dangqianweizhi = ""
+
+
+class beifen(object):
+    def chuangjian(self,lujing,newlujing):
+        self.lujing = lujing
+        self.newlujing = newlujing
+        a = os.path.exists(jianchalujing+"标定备份")
+        if a == False:
+            os.mkdir(jianchalujing + "标定备份")
+        with open(self.lujing,"r",encoding="utf-8") as q_s:
+            lines = q_s.readlines()
+        with open(self.newlujing, "w", encoding="utf-8") as j_w:
+            for i in lines:
+                j_w.write(i)
