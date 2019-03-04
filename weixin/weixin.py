@@ -8,7 +8,7 @@ from aip import AipOcr
 import time
 from itchat.content import *
 gname = '英雄杀'
-context = '再发图片'
+context = ''
 # 定义常量
 APP_ID = '15654566'
 API_KEY = 'QmxIgQQMvUAUSTZkMYvvYDr8'
@@ -16,6 +16,8 @@ SECRET_KEY = 'XUyGdkvSZ9OuapmvnDCDrsWEbOllO1tz'
 aipOcr = AipOcr(APP_ID, API_KEY, SECRET_KEY)
 options = {}
 weiyiid = ''
+
+
 
 class beifen(object):
     def chuangjian(self,lujing):
@@ -58,6 +60,7 @@ def text_reply(msg):
     #print(msg)
     wenjianjia = msg['ActualNickName']
     nowTime = datetime.datetime.now().strftime('%H%M%S')  # 现在
+
     mingzi = msg['ActualNickName']
     chuangjian = beifen()
     chuangjian.chuangjian(mingzi)
@@ -78,26 +81,19 @@ def text_reply(msg):
 
         result = aipOcr.vehicleLicense(get_file_content(filePath), options)
         print(result)
-        result_1 = result['words_result']
-        haopai = result_1['号牌号码']['words']
-        jiazihao = result_1['车辆识别代号']['words']
+        dangqianshijian = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if 'error_msg' in result:
+            cuowutishi = "尊敬的%s您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送。"%mingzi
+            SendChatRoomsMsg(gname, cuowutishi)
+        else:
+            result_1 = result['words_result']
+            haopai = result_1['号牌号码']['words']
+            jiazihao = result_1['车辆识别代号']['words']
+            tixing = "尊敬的%s您所预约的车辆号牌号码%s，车辆识别代号%s,信息已于%s记录。"%(mingzi,haopai,jiazihao,dangqianshijian)
+            SendChatRoomsMsg(gname, tixing)
+if __name__ == '__main__':
 
-        # for key in result['words_result']:
-        #
-        #     jieguo = (key + ':' + str(result['words_result'][key]['words']))
-        #     print(jieguo)
-        tixing = "尊敬的%s您所预约的车辆号牌号码%s，车辆识别代号%s,信息已记录。"%(mingzi,haopai,jiazihao)
-        SendChatRoomsMsg(gname, tixing)
-        #msg['Text'](mingzi + '\\' + mingzi + nowTime + ".jpg")
-
-        # itchat.send("您发送了：\'%s\'\n微信目前处于python托管，你的消息我会转发到手机，谢谢" %
-        #             (msg['Text']), toUserName=msg['FromUserName'])
-    # @itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO])
-    # def download_files(msg):
-    #     #msg.download(msg['FileName'])   #这个同样是下载文件的方式
-    #     msg['Text'](msg['FileName'])      #下载文件
-    #     #将下载的文件发送给发送者
-    #     itchat.send('@%s@%s' % ('img' if msg['Type'] == 'Picture' else 'fil', msg["FileName"]), msg["FromUserName"])
-itchat.auto_login(enableCmdQR=True, hotReload=True)
-SendChatRoomsMsg(gname, context)
-itchat.run()
+    itchat.auto_login(enableCmdQR=2, hotReload=True)
+    SendChatRoomsMsg(gname, context)
+    print(username)
+    itchat.run()
