@@ -70,6 +70,33 @@ class sql_mokuai(object):
         # 关闭数据库连接
         db.close()
 
+    def chaxundangri(self, xingming):
+        self.xingming = xingming
+        # 打开数据库连接
+        db = pymysql.connect("localhost", "root", "sa", "mysql")
+
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
+        dangqianshijian = time.strftime("%Y-%m-%d ", time.localtime())
+        # SQL 查询语句
+        sql = "SELECT * FROM yuyue WHERE xingming = '%s' and yuyueshijian >= '%s00:00:00' and yuyueshijian <= '%s23:59:59'" % (self.xingming,dangqianshijian,dangqianshijian)
+        print(sql)
+
+        try:
+            # 执行SQL语句
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            # print(results)
+            return results
+
+            # 打印结果
+        except:
+            print("Error: unable to fetch data")
+
+        # 关闭数据库连接
+        db.close()
+
 class beifen(object):
     def chuangjian(self,lujing):
         self.lujing = lujing
@@ -82,8 +109,6 @@ class beifen(object):
         self.msgid =msgid
         global weiyiid
         weiyiid = self.msgid
-
-
 
 class baiduai(object):
     def shibei(self,filepath):
@@ -114,24 +139,64 @@ company_group = ensure_one(bot.groups().search('英雄杀'))
 
 company_group.send('机器人已启动')
 
-# 将老板的消息转发到文件传输助手
-@bot.register(company_group)
+@bot.register(company_group,TEXT)
 def forward_boss_message(msg):
-    print(msg.raw)
-    if '#' in msg.raw['Text']:
-        print("包含#号")
+    yonghu = msg.raw['ActualNickName']
+
+    mingling = (msg.raw['Text'])
+    if "预约" in mingling:
+        yuyue = str.upper(mingling[2:])
+        cheliangleixing = ""
+        if len(yuyue) == 7:
+
+            cc = sql_mokuai()
+            paichong = cc.chaxun(yuyue, cheliangleixing)
+            if paichong == ():
+                dangqianshijian = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                tixing = "@%s  您所预约的车辆号牌号码%s，信息已于%s记录,预约成功。" % (yonghu, yuyue, dangqianshijian)
+                # print(tixing)
+                company_group.send(tixing)
+                cc.charu("", yonghu, yuyue, cheliangleixing, "", "", dangqianshijian, "", '')
+            else:
+                # print("chonggfule")
+                # print(paichong[0])
+                tixing_2 = "@%s  您所预约的车辆号牌号码%s，于%s 已经被 %s 预约，请勿重复预约，如有异议请联系客服处理。" % (
+                yonghu, paichong[0][2], paichong[0][6], paichong[0][1])
+                company_group.send(tixing_2)
+
+        else:
+            tixing_3 = "@%s  您所输入信息有误，请参照示例：预约黑K12345 或 预约黑K1234挂，重新输入。" % yonghu
+            company_group.send(tixing_3)
+    if "查询" in mingling:
+        print("chaxoun")
+        cx = sql_mokuai()
+        cx = cx.chaxundangri(yonghu)
+        print(cx)
 
 
+
+
+
+
+
+
+
+
+
+# 将老板的消息转发到文件传输助手
+@bot.register(company_group,PICTURE)
+def forward_boss_message(msg):
 
     if msg.raw['MsgId'] != weiyiid:
+        print(msg.raw)
         naha = beifen()
         naha.tongbu(msg.raw['MsgId'])
         nowTime = datetime.datetime.now().strftime('%H%M%S')
         yonghu = msg.raw['ActualNickName']
         # print(msg)
         # print(yonghu)
-        msg.get_file('照片\\'+ yonghu + nowTime +'.jpg')
-        a = '照片\\'+ yonghu + nowTime +'.jpg'
+        msg.get_file('D:\github\weixin\照片\\'+ yonghu + nowTime +'.jpg')
+        a = 'D:\github\weixin\照片\\'+ yonghu + nowTime +'.jpg'
         b = baiduai()
         result = b.shibei(a)
         # print(result)
@@ -154,7 +219,7 @@ def forward_boss_message(msg):
                 if paichong == ():
                     jiazihao = result_1['车辆识别代号']['words']
                     dangqianshijian = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-                    tixing = "@%s  您所预约的车辆号牌号码%s，车辆识别代号%s,信息已于%s记录。" % (yonghu, haopai, jiazihao, dangqianshijian)
+                    tixing = "@%s  您所预约的车辆号牌号码%s，车辆识别代号%s,信息已于%s记录，预约成功。" % (yonghu, haopai, jiazihao, dangqianshijian)
                     # print(tixing)
                     company_group.send(tixing)
                     cc.charu("",yonghu,haopai,cheliangleixing,"致远","",dangqianshijian,"",a)
