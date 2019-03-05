@@ -8,10 +8,7 @@ import pymysql
 
 weiyiid = ''
 class sql_mokuai(object):
-
-    def charu(self,id_1,xingming_1,chehao_1,leixing_1,jiancezhan_1,jifen_1,yuyueshijian_1,jianceshijian_1,zhaopianlujing_1):
-
-        self.id = id_1
+    def charu(self,xingming_1,chehao_1,leixing_1,jiancezhan_1,jifen_1,yuyueshijian_1,jianceshijian_1,zhaopianlujing_1):
         self.xingming = xingming_1
         self.chehao = chehao_1
         self.leixing = leixing_1
@@ -25,10 +22,9 @@ class sql_mokuai(object):
 
         # 使用cursor()方法获取操作游标
         cursor = db.cursor()
-        # SQL 插入语句
-        sql = "INSERT INTO yuyue(id, xingming, chehao, leixing, jiancezhan, " \
-              "jifen, yuyueshijian, jianceshijian,zhaopianlujing)VALUES ('%s','%s','%s','%s','" \
-              "%s','%s','%s','%s','%s')" %(self.id,self.xingming, self.chehao, self.leixing,
+        sql = "INSERT INTO yuyue(xingming, chehao, leixing, jiancezhan, " \
+              "jifen, yuyueshijian, jianceshijian,zhaopianlujing)VALUES ('%s','%s','%s','" \
+              "%s','%s','%s','%s','%s')" % (self.xingming, self.chehao, self.leixing,
                                       self.jiancezhan, self.jifen, self.yuyueshijian,self.jianceshijian,self.zhaopianlujing)
         try:
             # 执行sql语句
@@ -156,7 +152,7 @@ def forward_boss_message(msg):
                 tixing = "@%s  您所预约的车辆号牌号码%s，信息已于%s记录,预约成功。" % (yonghu, yuyue, dangqianshijian)
                 # print(tixing)
                 company_group.send(tixing)
-                cc.charu("", yonghu, yuyue, cheliangleixing, "", "", dangqianshijian, "", '')
+                cc.charu(yonghu, yuyue, cheliangleixing, "", "", dangqianshijian, "", '')
             else:
                 # print("chonggfule")
                 # print(paichong[0])
@@ -168,10 +164,15 @@ def forward_boss_message(msg):
             tixing_3 = "@%s  您所输入信息有误，请参照示例：预约黑K12345 或 预约黑K1234挂，重新输入。" % yonghu
             company_group.send(tixing_3)
     if "查询" in mingling:
-        print("chaxoun")
         cx = sql_mokuai()
         cx = cx.chaxundangri(yonghu)
-        print(cx)
+        chaxunbiao = []
+        for i in cx:
+            chaxunbiao.append(i[2])
+        suliang = (len(chaxunbiao))
+        tixing_4 = "@%s  您今日预约车辆%s台次，车号:%s，请再接再厉！。" % (yonghu,suliang,chaxunbiao)
+        company_group.send(tixing_4)
+
 
 
 
@@ -222,7 +223,7 @@ def forward_boss_message(msg):
                     tixing = "@%s  您所预约的车辆号牌号码%s，车辆识别代号%s,信息已于%s记录，预约成功。" % (yonghu, haopai, jiazihao, dangqianshijian)
                     # print(tixing)
                     company_group.send(tixing)
-                    cc.charu("",yonghu,haopai,cheliangleixing,"致远","",dangqianshijian,"",a)
+                    cc.charu(yonghu,haopai,cheliangleixing,"","",dangqianshijian,"",a)
                 else:
                     # print("chonggfule")
                     # print(paichong[0])

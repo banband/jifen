@@ -1,6 +1,6 @@
 import pymysql
 
-class sql_mokuai_1(object):
+class sql_mokuai(object):
 
     def charu(self,id_1,xingming_1,chehao_1,leixing_1,jiancezhan_1,jifen_1,yuyueshijian_1,jianceshijian_1):
 
