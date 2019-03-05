@@ -143,7 +143,9 @@ def forward_boss_message(msg):
     if "预约" in mingling:
         yuyue = str.upper(mingling[2:])
         cheliangleixing = ""
-        if len(yuyue) == 7:
+        if len(yuyue) == 7 and u'\u4e00' <= yuyue[0] <= u'\u9fff':
+
+            print("zhongwen")
 
             cc = sql_mokuai()
             paichong = cc.chaxun(yuyue, cheliangleixing)
