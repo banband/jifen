@@ -311,7 +311,7 @@ def forward_boss_message(msg):
         result = b.shibei(a)
         # print(result)
         if 'error_msg' in result:
-            cuowutishi = "@%s  您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送。"%yonghu
+            cuowutishi = "@%s  您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送,如无法提供清晰图片请使用（预约黑K12345）方式预约，括号内示例。"%yonghu
             company_group.send(cuowutishi)
         else:
             result_1 = result['words_result']
@@ -319,7 +319,7 @@ def forward_boss_message(msg):
             haopai = result_1['号牌号码']['words']
             cheliangleixing = result_1['车辆类型']['words']
             if len(haopai) != 7:
-                cuowutishi = "@%s  您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送。" % yonghu
+                cuowutishi = "@%s  您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送，如无法提供清晰图片请使用（预约黑K12345）方式预约，括号内示例。" % yonghu
                 company_group.send(cuowutishi)
 
             else:
