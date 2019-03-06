@@ -5,7 +5,7 @@ from aip import AipOcr
 import os
 import pymysql
 
-
+guanliyuan = "徐晓明"
 weiyiid = ''
 class sql_mokuai(object):
     def charu(self,xingming_1,chehao_1,leixing_1,jiancezhan_1,jifen_1,yuyueshijian_1,jianceshijian_1,zhaopianlujing_1):
@@ -252,27 +252,34 @@ def forward_boss_message(msg):
         tixing_5 = "@%s你好，普通员工命令：1、查询  --查询当日预约车辆数量及车号。   管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除。" % yonghu
         company_group.send(tixing_5)
     if "更改" in mingling:
-        genggai = sql_mokuai()
-        chaxun = genggai.chaxun_1(mingling[2:9])
-        if chaxun == ():
-            tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
-            company_group.send(tixing_7)
+        if yonghu == guanliyuan:
+            genggai = sql_mokuai()
+            chaxun = genggai.chaxun_1(mingling[2:9])
+            if chaxun == ():
+                tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
+                company_group.send(tixing_7)
+            else:
+                genggai.gengxin(mingling[9:],mingling[2:9])
+                tixing_8 = "@%s你好，%s，已更名为%s。" % (yonghu, mingling[2:9],mingling[9:])
+                company_group.send(tixing_8)
         else:
-            genggai.gengxin(mingling[9:],mingling[2:9])
-            tixing_8 = "@%s你好，%s，已更名为%s。" % (yonghu, mingling[2:9],mingling[9:])
-            company_group.send(tixing_8)
+            tixing_9 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
+            company_group.send(tixing_9)
 
     if "删除" in mingling:
-        shanchu = sql_mokuai()
-        chaxun = shanchu.chaxun_1(mingling[2:])
-        if chaxun == ():
-            tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu,mingling[2:])
-            company_group.send(tixing_6)
+        if yonghu == guanliyuan:
+            shanchu = sql_mokuai()
+            chaxun = shanchu.chaxun_1(mingling[2:])
+            if chaxun == ():
+                tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu,mingling[2:])
+                company_group.send(tixing_6)
+            else:
+                shanchu.shanchu(mingling[2:])
+                tixing_7 = "@%s你好，%s，已经删除成功。" % (yonghu, mingling[2:])
+                company_group.send(tixing_7)
         else:
-            shanchu.shanchu(mingling[2:])
-            tixing_7 = "@%s你好，%s，已经删除成功。" % (yonghu, mingling[2:])
-            company_group.send(tixing_7)
-
+            tixing_10 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
+            company_group.send(tixing_10)
 
 
 
