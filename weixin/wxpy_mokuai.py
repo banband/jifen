@@ -74,7 +74,7 @@ class sql_mokuai(object):
         cursor = db.cursor()
         # SQL 查询语句
         sql = "SELECT * FROM yuyue WHERE chehao = '%s' and leixing = '%s'" % (self.chehao,self.cheliangleixing)
-        print(sql)
+        #print(sql)
         try:
             # 执行SQL语句
             cursor.execute(sql)
@@ -98,7 +98,7 @@ class sql_mokuai(object):
         cursor = db.cursor()
         # SQL 查询语句
         sql = "SELECT * FROM yuyue WHERE chehao = '%s'" % self.chehao
-        print(sql)
+        #print(sql)
         try:
             # 执行SQL语句
             cursor.execute(sql)
@@ -124,7 +124,7 @@ class sql_mokuai(object):
         dangqianshijian = time.strftime("%Y-%m-%d ", time.localtime())
         # SQL 查询语句
         sql = "SELECT * FROM yuyue WHERE xingming = '%s' and yuyueshijian >= '%s00:00:00' and yuyueshijian <= '%s23:59:59'" % (self.xingming,dangqianshijian,dangqianshijian)
-        print(sql)
+        #print(sql)
 
         try:
             # 执行SQL语句
@@ -149,7 +149,7 @@ class sql_mokuai(object):
         cursor = db.cursor()
         # SQL 查询语句
         sql = "DELETE FROM yuyue WHERE chehao = '%s'" %self.chehao
-        print(sql)
+        #print(sql)
         try:
             # 执行SQL语句
             cursor.execute(sql)
@@ -219,7 +219,7 @@ def forward_boss_message(msg):
         cheliangleixing = ""
         if len(yuyue) == 7 and u'\u4e00' <= yuyue[0] <= u'\u9fff':
 
-            print("zhongwen")
+            #print("zhongwen")
 
             cc = sql_mokuai()
             paichong = cc.chaxun(yuyue, cheliangleixing)
