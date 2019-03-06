@@ -40,6 +40,30 @@ class sql_mokuai(object):
         # 关闭数据库连接
         db.close()
 
+    def gengxin(self, xingming_1, chehao_1):
+        self.xingming = xingming_1
+        self.chehao = chehao_1
+
+        # 打开数据库连接
+        db = pymysql.connect("localhost", "root", "sa", "mysql")
+
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
+        sql = "UPDATE yuyue SET xingming='%s' WHERE chehao = '%s'" %(self.xingming,self.chehao)
+        try:
+            # 执行sql语句
+            cursor.execute(sql)
+            # 提交到数据库执行
+            db.commit()
+
+        except:
+            # 如果发生错误则回滚
+            db.rollback()
+            print("失败")
+
+        # 关闭数据库连接
+        db.close()
+
     def chaxun(self,chehao_1,cheliangleixing_1):
         self.chehao = chehao_1
         self.cheliangleixing = cheliangleixing_1
@@ -50,7 +74,31 @@ class sql_mokuai(object):
         cursor = db.cursor()
         # SQL 查询语句
         sql = "SELECT * FROM yuyue WHERE chehao = '%s' and leixing = '%s'" % (self.chehao,self.cheliangleixing)
-        #print(sql)
+        print(sql)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            #print(results)
+            return results
+
+                # 打印结果
+        except:
+            print("Error: unable to fetch data")
+
+        # 关闭数据库连接
+        db.close()
+    def chaxun_1(self,chehao_1,):
+        self.chehao = chehao_1
+        # 打开数据库连接
+        db = pymysql.connect("localhost", "root", "sa", "mysql")
+
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
+        # SQL 查询语句
+        sql = "SELECT * FROM yuyue WHERE chehao = '%s'" % self.chehao
+        print(sql)
         try:
             # 执行SQL语句
             cursor.execute(sql)
@@ -92,6 +140,32 @@ class sql_mokuai(object):
 
         # 关闭数据库连接
         db.close()
+    def shanchu(self,chehao):
+        self.chehao = chehao
+
+        db = pymysql.connect("localhost", "root", "sa", "mysql")
+
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
+        # SQL 查询语句
+        sql = "DELETE FROM yuyue WHERE chehao = '%s'" %self.chehao
+        print(sql)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql)
+            # 获取所有记录列表
+            db.commit()
+            # print(results)
+
+            # 打印结果
+        except:
+            # 如果发生错误则回滚
+            db.rollback()
+            print("失败")
+
+        # 关闭数据库连接
+        db.close()
+
 
 class beifen(object):
     def chuangjian(self,lujing):
@@ -138,10 +212,10 @@ company_group.send('机器人已启动')
 @bot.register(company_group,TEXT)
 def forward_boss_message(msg):
     yonghu = msg.raw['ActualNickName']
-
-    mingling = (msg.raw['Text'])
+    mingling = str.upper(msg.raw['Text'])
+    print(mingling)
     if "预约" in mingling:
-        yuyue = str.upper(mingling[2:])
+        yuyue = mingling[2:]
         cheliangleixing = ""
         if len(yuyue) == 7 and u'\u4e00' <= yuyue[0] <= u'\u9fff':
 
@@ -174,6 +248,32 @@ def forward_boss_message(msg):
         suliang = (len(chaxunbiao))
         tixing_4 = "@%s  您今日预约车辆%s台次，车号:%s，请再接再厉！。" % (yonghu,suliang,chaxunbiao)
         company_group.send(tixing_4)
+    if "帮助" in mingling:
+        tixing_5 = "@%s你好，普通员工命令：1、查询  --查询当日预约车辆数量及车号。   管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除。" % yonghu
+        company_group.send(tixing_5)
+    if "更改" in mingling:
+        genggai = sql_mokuai()
+        chaxun = genggai.chaxun_1(mingling[2:9])
+        if chaxun == ():
+            tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
+            company_group.send(tixing_7)
+        else:
+            genggai.gengxin(mingling[9:],mingling[2:9])
+            tixing_8 = "@%s你好，%s，已更名为%s。" % (yonghu, mingling[2:9],mingling[9:])
+            company_group.send(tixing_8)
+
+    if "删除" in mingling:
+        shanchu = sql_mokuai()
+        chaxun = shanchu.chaxun_1(mingling[2:])
+        if chaxun == ():
+            tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu,mingling[2:])
+            company_group.send(tixing_6)
+        else:
+            shanchu.shanchu(mingling[2:])
+            tixing_7 = "@%s你好，%s，已经删除成功。" % (yonghu, mingling[2:])
+            company_group.send(tixing_7)
+
+
 
 
 
