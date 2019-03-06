@@ -4,10 +4,12 @@ import time
 from aip import AipOcr
 import os
 import pymysql
-
+#管理员账号
 guanliyuan = "徐晓明"
 weiyiid = ''
+#数据库类
 class sql_mokuai(object):
+    #插入方法
     def charu(self,xingming_1,chehao_1,leixing_1,jiancezhan_1,jifen_1,yuyueshijian_1,jianceshijian_1,zhaopianlujing_1):
         self.xingming = xingming_1
         self.chehao = chehao_1
@@ -22,6 +24,7 @@ class sql_mokuai(object):
 
         # 使用cursor()方法获取操作游标
         cursor = db.cursor()
+        #插入语句
         sql = "INSERT INTO yuyue(xingming, chehao, leixing, jiancezhan, " \
               "jifen, yuyueshijian, jianceshijian,zhaopianlujing)VALUES ('%s','%s','%s','" \
               "%s','%s','%s','%s','%s')" % (self.xingming, self.chehao, self.leixing,
@@ -40,6 +43,7 @@ class sql_mokuai(object):
         # 关闭数据库连接
         db.close()
 
+    #更新方法
     def gengxin(self, xingming_1, chehao_1):
         self.xingming = xingming_1
         self.chehao = chehao_1
@@ -64,33 +68,10 @@ class sql_mokuai(object):
         # 关闭数据库连接
         db.close()
 
-    def chaxun(self,chehao_1,cheliangleixing_1):
+    #查询方法
+    def chaxun(self,chehao_1):
         self.chehao = chehao_1
-        self.cheliangleixing = cheliangleixing_1
-        # 打开数据库连接
-        db = pymysql.connect("localhost", "root", "sa", "mysql")
 
-        # 使用cursor()方法获取操作游标
-        cursor = db.cursor()
-        # SQL 查询语句
-        sql = "SELECT * FROM yuyue WHERE chehao = '%s' and leixing = '%s'" % (self.chehao,self.cheliangleixing)
-        #print(sql)
-        try:
-            # 执行SQL语句
-            cursor.execute(sql)
-            # 获取所有记录列表
-            results = cursor.fetchall()
-            #print(results)
-            return results
-
-                # 打印结果
-        except:
-            print("Error: unable to fetch data")
-
-        # 关闭数据库连接
-        db.close()
-    def chaxun_1(self,chehao_1,):
-        self.chehao = chehao_1
         # 打开数据库连接
         db = pymysql.connect("localhost", "root", "sa", "mysql")
 
@@ -114,6 +95,7 @@ class sql_mokuai(object):
         # 关闭数据库连接
         db.close()
 
+    #查询当日预约车辆方法
     def chaxundangri(self, xingming):
         self.xingming = xingming
         # 打开数据库连接
@@ -140,6 +122,8 @@ class sql_mokuai(object):
 
         # 关闭数据库连接
         db.close()
+
+    #删除方法
     def shanchu(self,chehao):
         self.chehao = chehao
 
@@ -167,6 +151,7 @@ class sql_mokuai(object):
         db.close()
 
 
+#备份查询ID唯一类
 class beifen(object):
     def chuangjian(self,lujing):
         self.lujing = lujing
@@ -180,6 +165,8 @@ class beifen(object):
         global weiyiid
         weiyiid = self.msgid
 
+
+#百度AI识别类
 class baiduai(object):
     def shibei(self,filepath):
         # 定义常量
@@ -216,19 +203,18 @@ def forward_boss_message(msg):
     print(mingling)
     if "预约" in mingling:
         yuyue = mingling[2:]
-        cheliangleixing = ""
         if len(yuyue) == 7 and u'\u4e00' <= yuyue[0] <= u'\u9fff':
 
             #print("zhongwen")
 
             cc = sql_mokuai()
-            paichong = cc.chaxun(yuyue, cheliangleixing)
+            paichong = cc.chaxun(yuyue)
             if paichong == ():
                 dangqianshijian = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                 tixing = "@%s  您所预约的车辆号牌号码%s，信息已于%s记录,预约成功。" % (yonghu, yuyue, dangqianshijian)
                 # print(tixing)
                 company_group.send(tixing)
-                cc.charu(yonghu, yuyue, cheliangleixing, "", "", dangqianshijian, "", '')
+                cc.charu(yonghu, yuyue, "", "", "", dangqianshijian, "", '')
             else:
                 # print("chonggfule")
                 # print(paichong[0])
@@ -254,7 +240,7 @@ def forward_boss_message(msg):
     if "更改" in mingling:
         if yonghu == guanliyuan:
             genggai = sql_mokuai()
-            chaxun = genggai.chaxun_1(mingling[2:9])
+            chaxun = genggai.chaxun(mingling[2:9])
             if chaxun == ():
                 tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
                 company_group.send(tixing_7)
@@ -269,7 +255,7 @@ def forward_boss_message(msg):
     if "删除" in mingling:
         if yonghu == guanliyuan:
             shanchu = sql_mokuai()
-            chaxun = shanchu.chaxun_1(mingling[2:])
+            chaxun = shanchu.chaxun(mingling[2:])
             if chaxun == ():
                 tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu,mingling[2:])
                 company_group.send(tixing_6)
@@ -280,18 +266,6 @@ def forward_boss_message(msg):
         else:
             tixing_10 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
             company_group.send(tixing_10)
-
-
-
-
-
-
-
-
-
-
-
-
 
 # 将老板的消息转发到文件传输助手
 @bot.register(company_group,PICTURE)
@@ -317,17 +291,17 @@ def forward_boss_message(msg):
             result_1 = result['words_result']
             print(result_1)
             haopai = result_1['号牌号码']['words']
-            cheliangleixing = result_1['车辆类型']['words']
             if len(haopai) != 7:
                 cuowutishi = "@%s  您所发送的图片不清晰或者不是行驶证正本，请检查后重新发送，如无法提供清晰图片请使用（预约黑K12345）方式预约，括号内示例。" % yonghu
                 company_group.send(cuowutishi)
 
             else:
                 cc = sql_mokuai()
-                paichong = cc.chaxun(haopai,cheliangleixing)
+                paichong = cc.chaxun(haopai)
                 # print(paichong)
                 if paichong == ():
                     jiazihao = result_1['车辆识别代号']['words']
+                    cheliangleixing = result_1['车辆类型']['words']
                     dangqianshijian = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
                     tixing = "@%s  您所预约的车辆号牌号码%s，车辆识别代号%s,信息已于%s记录，预约成功。" % (yonghu, haopai, jiazihao, dangqianshijian)
                     # print(tixing)
@@ -339,16 +313,5 @@ def forward_boss_message(msg):
                     tixing_2 = "@%s  您所预约的车辆号牌号码%s，于%s 已经被 %s 预约，请勿重复预约，如有异议请联系客服处理。" % (yonghu, paichong[0][2], paichong[0][6], paichong[0][1])
                     company_group.send(tixing_2)
 
-
-
-
-
-
 # 堵塞线程
-
-
-
-
-
-
 embed()
