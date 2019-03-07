@@ -4,6 +4,7 @@ import time
 from aip import AipOcr
 import os
 import pymysql
+import xlwt
 #管理员账号
 guanliyuan = "徐晓明"
 weiyiid = ''
@@ -122,6 +123,32 @@ class sql_mokuai(object):
 
         # 关闭数据库连接
         db.close()
+    #查询时间
+    def chaxunshijian(self, yuyueshijian):
+        self.yuyueshijian = yuyueshijian
+        # 打开数据库连接
+        db = pymysql.connect("localhost", "root", "sa", "mysql")
+
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
+        # SQL 查询语句
+        sql = "SELECT * FROM yuyue WHERE yuyueshijian >= '%s 00:00:00' and yuyueshijian <= '%s 23:59:59'" % (self.yuyueshijian,self.yuyueshijian)
+        print(sql)
+
+        try:
+            # 执行SQL语句
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            # print(results)
+            return results
+
+            # 打印结果
+        except:
+            print("Error: unable to fetch data")
+
+        # 关闭数据库连接
+        db.close()
 
     #删除方法
     def shanchu(self,chehao):
@@ -189,12 +216,85 @@ class baiduai(object):
         result = aipOcr.vehicleLicense(get_file_content(self.filePath), options)
         return result
 
+
+class excel_1(object):
+    def chuli(self):
+        zuotian = (datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        print(zuotian)
+        chaxun_zuotian = sql_mokuai()
+        zuotianbaobiao = chaxun_zuotian.chaxunshijian(zuotian)
+
+
+        book = xlwt.Workbook()  # 新建一个excel
+        sheet = book.add_sheet('case1_sheet')  # 添加一个sheet页
+        # sheet.write_merge(0, 0, 0, 5)
+
+        sheet.col(0).width = 2000
+        sheet.col(1).width = 2000
+        sheet.col(2).width = 2500
+        sheet.col(3).width = 5000
+        sheet.col(4).width = 5000
+        sheet.col(5).width = 2500
+        borders = xlwt.Borders()
+        borders.left = xlwt.Borders.MEDIUM  # 添加边框-虚线边框
+        borders.right = xlwt.Borders.MEDIUM  # 添加边框-虚线边框
+        borders.top = xlwt.Borders.MEDIUM  # 添加边框-虚线边框
+        borders.bottom = xlwt.Borders.MEDIUM  # 添加边框-虚线边框
+
+        style = xlwt.XFStyle()  # Create style
+        style.borders = borders  # Add borders to style
+        al = xlwt.Alignment()
+        al.horz = 0x02  # 设置水平居中
+        al.vert = 0x01  # 设置垂直居中
+        style.alignment = al
+
+        tall_style = xlwt.easyxf('font:height 720')  # 36pt
+        first_row = sheet.row(0)
+        first_row.set_style(tall_style)
+        tall_style_1 = xlwt.easyxf('font:height 520')  # 36pt
+        first_row_1 = sheet.row(1)
+        first_row_1.set_style(tall_style_1)
+
+        sheet.write_merge(0, 0, 0, 5, "职工预约车辆登记表（考核办）", style)
+        sheet.write(1, 0, "序号", style)
+        sheet.write(1, 1, "姓名", style)
+        sheet.write(1, 2, "车号", style)
+        sheet.write(1, 3, "预约时间", style)
+        sheet.write(1, 4, "检测时间", style)
+        sheet.write(1, 5, "积分", style)
+        row = 2  # 控制行
+        for stu in zuotianbaobiao:
+            # print(stu[1:4])
+            tall_style_1 = xlwt.easyxf('font:height 520')  # 36pt
+            first_row_1 = sheet.row(row)
+            first_row_1.set_style(tall_style_1)
+
+            col = 1  # 控制列
+            sheet.write(row, col + 3, "", style)
+            sheet.write(row, col + 4, "", style)
+            sheet.write(row, 0, row + 1, style)
+            for s in stu[1:4]:  # 再循环里面list的值，每一列
+                # sheet.write(row, idhang, str(idhang))
+                sheet.write(row, col, s, style)
+
+                col += 1
+            row += 1
+
+        book.save('%s.xls'% zuotian)  # 保存到当前目录下
+        return zuotian
+
+
+
+
 bot = Bot(cache_path=True, console_qr=False)
 
 # 定位公司群
 company_group = ensure_one(bot.groups().search('英雄杀'))
 
 company_group.send('机器人已启动')
+#my_friend = bot.friends().search('大辣椒')[0]
+# my_friend.send_file('111.xls')
+
 
 @bot.register(company_group,TEXT)
 def forward_boss_message(msg):
@@ -266,8 +366,14 @@ def forward_boss_message(msg):
         else:
             tixing_10 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
             company_group.send(tixing_10)
+    if "统计" in mingling:
 
-# 将老板的消息转发到文件传输助手
+        tongji = excel_1()
+        tongji = tongji.chuli()
+        print(tongji)
+        company_group.send_file('%s.xls'%tongji)
+
+
 @bot.register(company_group,PICTURE)
 def forward_boss_message(msg):
 
