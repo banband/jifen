@@ -5,8 +5,8 @@ from aip import AipOcr
 import os
 import pymysql
 import xlwt
-#管理员账号
-guanliyuan = "徐晓明"
+
+
 weiyiid = ''
 #数据库类
 class sql_mokuai(object):
@@ -290,10 +290,47 @@ bot = Bot(cache_path=True, console_qr=False)
 
 # 定位公司群
 company_group = ensure_one(bot.groups().search('英雄杀'))
+company_group.send('机器人已上线，可以预约，如发现机器人无应答请联系管理员后再重新预约车辆。输入-- 帮助 可以获取使用命令。')
+#管理员账号
+guanliyuan = bot.friends().search('大辣椒')[0]
+guanliyuan.send('管理员您好，机器人已上线，输入-- 帮助 可以获取管理员命令。')
+@bot.register(guanliyuan,TEXT)
+def forward_guanli_message(msg):
+    # print(msg.raw)
+    yonghu = "管理员"
+    mingling = str.upper(msg.raw['Text'])
+    print(mingling)
+    if "更改" in mingling:
+        genggai = sql_mokuai()
+        chaxun = genggai.chaxun(mingling[2:9])
+        if chaxun == ():
+            tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
+            guanliyuan.send(tixing_7)
+        else:
+            genggai.gengxin(mingling[9:], mingling[2:9])
+            tixing_8 = "@%s你好，%s，已更名为%s。" % (yonghu, mingling[2:9], mingling[9:])
+            guanliyuan.send(tixing_8)
 
-company_group.send('机器人已启动')
-#my_friend = bot.friends().search('大辣椒')[0]
-# my_friend.send_file('111.xls')
+
+    if "删除" in mingling:
+        shanchu = sql_mokuai()
+        chaxun = shanchu.chaxun(mingling[2:])
+        if chaxun == ():
+            tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:])
+            guanliyuan.send(tixing_6)
+        else:
+            shanchu.shanchu(mingling[2:])
+            tixing_7 = "@%s你好，%s，已经删除成功。" % (yonghu, mingling[2:])
+            guanliyuan.send(tixing_7)
+
+    if "统计" in mingling:
+        tongji = excel_1()
+        tongji = tongji.chuli()
+        print(tongji)
+        guanliyuan.send_file('%s.xls' % tongji)
+    if "帮助" in mingling:
+        tixing_5 = "@%s你好,管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除。" % yonghu
+        guanliyuan.send(tixing_5)
 
 
 @bot.register(company_group,TEXT)
@@ -335,43 +372,9 @@ def forward_boss_message(msg):
         tixing_4 = "@%s  您今日预约车辆%s台次，车号:%s，请再接再厉！。" % (yonghu,suliang,chaxunbiao)
         company_group.send(tixing_4)
     if "帮助" in mingling:
-        tixing_5 = "@%s你好，普通员工命令：1、查询  --查询当日预约车辆数量及车号。   管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除。" % yonghu
+        tixing_5 = "@%s你好，普通员工命令：1、查询  --查询当日预约车辆数量及车号。" % yonghu
         company_group.send(tixing_5)
-    if "更改" in mingling:
-        if yonghu == guanliyuan:
-            genggai = sql_mokuai()
-            chaxun = genggai.chaxun(mingling[2:9])
-            if chaxun == ():
-                tixing_7 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu, mingling[2:9])
-                company_group.send(tixing_7)
-            else:
-                genggai.gengxin(mingling[9:],mingling[2:9])
-                tixing_8 = "@%s你好，%s，已更名为%s。" % (yonghu, mingling[2:9],mingling[9:])
-                company_group.send(tixing_8)
-        else:
-            tixing_9 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
-            company_group.send(tixing_9)
 
-    if "删除" in mingling:
-        if yonghu == guanliyuan:
-            shanchu = sql_mokuai()
-            chaxun = shanchu.chaxun(mingling[2:])
-            if chaxun == ():
-                tixing_6 = "@%s你好，没有查询到%s，请核对后重新发送。" % (yonghu,mingling[2:])
-                company_group.send(tixing_6)
-            else:
-                shanchu.shanchu(mingling[2:])
-                tixing_7 = "@%s你好，%s，已经删除成功。" % (yonghu, mingling[2:])
-                company_group.send(tixing_7)
-        else:
-            tixing_10 = "@%s你好，你不是管理员，不能使用管理员命令" % yonghu
-            company_group.send(tixing_10)
-    if "统计" in mingling:
-
-        tongji = excel_1()
-        tongji = tongji.chuli()
-        print(tongji)
-        company_group.send_file('%s.xls'%tongji)
 
 
 @bot.register(company_group,PICTURE)
