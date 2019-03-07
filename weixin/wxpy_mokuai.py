@@ -319,7 +319,7 @@ def forward_boss_message(msg):
                 # print("chonggfule")
                 # print(paichong[0])
                 tixing_2 = "@%s  您所预约的车辆号牌号码%s，于%s 已经被 %s 预约，请勿重复预约，如有异议请联系客服处理。" % (
-                yonghu, paichong[0][2], paichong[0][6], paichong[0][1])
+                yonghu, paichong[0][2], paichong[0][3], paichong[0][1])
                 company_group.send(tixing_2)
 
         else:
@@ -415,8 +415,8 @@ def forward_boss_message(msg):
                     cc.charu(yonghu,haopai,cheliangleixing,"","",dangqianshijian,"",a)
                 else:
                     # print("chonggfule")
-                    # print(paichong[0])
-                    tixing_2 = "@%s  您所预约的车辆号牌号码%s，于%s 已经被 %s 预约，请勿重复预约，如有异议请联系客服处理。" % (yonghu, paichong[0][2], paichong[0][6], paichong[0][1])
+                    print(paichong[0])
+                    tixing_2 = "@%s  您所预约的车辆号牌号码%s，于%s 已经被 %s 预约，请勿重复预约，如有异议请联系客服处理。" % (yonghu, paichong[0][2], paichong[0][3], paichong[0][1])
                     company_group.send(tixing_2)
 
 # 堵塞线程
