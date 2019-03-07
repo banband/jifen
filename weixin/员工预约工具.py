@@ -329,7 +329,7 @@ def forward_guanli_message(msg):
         print(tongji)
         guanliyuan.send_file('%s.xls' % tongji)
     if "帮助" in mingling:
-        tixing_5 = "@%s你好,管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除。" % yonghu
+        tixing_5 = "@%s你好,管理员命令：1、更改黑K12345高显超 --将黑K12345更改为高显超名下，2、删除黑K12345 --将黑K12345车号删除，3、统计 --自动统计前一天预约车辆生成EXCEL表并发送给你。" % yonghu
         guanliyuan.send(tixing_5)
 
 
@@ -374,7 +374,6 @@ def forward_boss_message(msg):
     if "帮助" in mingling:
         tixing_5 = "@%s你好，普通员工命令：1、查询  --查询当日预约车辆数量及车号。" % yonghu
         company_group.send(tixing_5)
-
 
 
 @bot.register(company_group,PICTURE)
