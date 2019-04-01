@@ -4,7 +4,8 @@ from functools import reduce
 def index(request):
     return render(request,'ticheng/index.html',)
 
-
+def baobiao(request):
+    return render(request,'ticheng/baobiao.html')
 def jisuan(request):
     shuju = request.POST
 
