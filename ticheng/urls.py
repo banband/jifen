@@ -25,4 +25,8 @@ urlpatterns = [
     url(r'^yingxiao_jisuan$', views.yingxiao_jisuan),
     url(r'^yuangong$', views.yuangong),
     url(r'^baobiao$', views.baobiao),
+    url(r'^chaxun$', views.chaxun),
+    url(r'^chaxun_1$', views.chaxun_1),
+    url(r'^delete(\d+)/$', views.delete),
+    url(r'^miyaocuowu$', views.miyaocuowu)
 ]

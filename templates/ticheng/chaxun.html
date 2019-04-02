@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>预约车辆查询系统</title>
+</head>
+<body>
+<h3>预约车辆查询系统</h3>
+<form method="post" action="chaxun_1">
+    输入查询的车号：<input type="text" name="1"><br/>
+    请输入查询秘钥：<input type="text" name="2"><br/>
+    <input type="submit" value="查询">
+</form>
+
+
+   {%for i in chaxun_2%}
+<li>姓名:{{i.姓名}} 车号:{{i.车号}} 预约时间:{{i.预约时间}}--<a href="/delete{{i.id}}/">删除</a></li>
+
+    {%endfor%}
+
+</form>
+
+</body>
+</html>

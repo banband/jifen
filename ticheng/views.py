@@ -1,11 +1,35 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from functools import reduce
+from ticheng.models import 预约列表
+
+from django.db.models import Q
 # Create your views here.
 def index(request):
     return render(request,'ticheng/index.html',)
 
+
 def baobiao(request):
-    return render(request,'ticheng/baobiao.html')
+    context = {'title': '图书列表', 'list': range(10)}
+    return render(request,'ticheng/baobiao.html',context)
+
+def chaxun(request):
+    return render(request,'ticheng/chaxun.html')
+def chaxun_1(request):
+    shuju = request.POST
+    chehao = shuju['1']
+    miyao = shuju['2']
+    if miyao == '12357':
+        chaxun_2 = 预约列表.objects.filter(车号=chehao).exclude(检测站='1')
+        return render(request, 'ticheng/chaxun.html', {'chaxun_2': chaxun_2})
+    else:
+        return render(request,'ticheng/miyaocuowu.html')
+def miyaocuowu(request):
+    return render(request,'ticheng/miyaocuowu.html')
+#逻辑删除指定编号的图书
+def delete(request,id):
+    预约列表.objects.filter(id=int(id)).update(检测站='1')
+    #转向到首页
+    return redirect('/chaxun')
 def jisuan(request):
     shuju = request.POST
 
